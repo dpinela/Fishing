@@ -32,26 +32,33 @@ public class Fishing : MAPI.Mod
         {
             return;
         }
-        Log("Placing fishing spot");
         var obj = UE.Object.Instantiate(fishingSpotPrefab!);
-        obj.transform.position = new UE.Vector3(60.9f, 15.6f, obj.transform.position.z);
+        obj.transform.position = new UE.Vector3(58.1f, 15.6f, obj.transform.position.z);
         var fsm = obj.LocateMyFSM("Shop Region");
-        fsm.GetFsmFloat("Move To X").Value = 60.9f;
+        fsm.GetFsmFloat("Move To X").Value = 58.1f;
+        var arrow = fsm.GetFsmGameObject("Prompt");
+        fsm.GetState("Init").AppendAction(() => {
+            var prompts = FindImmediateChild(arrow.Value, "Labels");
+            var sit = FindImmediateChild(prompts, "Sit");
+            UE.Object.Destroy(sit.GetComponent<SetTextMeshProGameText>());
+            var text = sit.GetComponent<TMP.TextMeshPro>();
+            text.text = "FISH";
+        });
         obj.SetActive(true);
-        PrintObjHierarchy("", obj);
     }
 
-    private void PrintObjHierarchy(string prefix, UE.GameObject obj)
+    private UE.GameObject FindImmediateChild(UE.GameObject parent, string childName)
     {
-        Log(prefix + obj.name + ": " + obj.activeSelf);
-        var extendedPrefix = "  " + prefix;
-        foreach (var c in obj.GetComponents<UE.MonoBehaviour>()) {
-            Log(extendedPrefix + "Component " + c.name + " " + c.GetType().Name);
-        }
-        foreach (UE.Transform t in obj.transform)
+        var transform = parent.transform;
+        for (var i = 0; i < transform.childCount; i++)
         {
-            PrintObjHierarchy(extendedPrefix, t.gameObject);
+            var c = transform.GetChild(i).gameObject;
+            if (c.name == childName)
+            {
+                return c;
+            }
         }
+        throw new System.InvalidOperationException($"GO {parent.name} has no child named {childName}");
     }
 
     public override string GetVersion() => "1.0";
