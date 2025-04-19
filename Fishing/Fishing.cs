@@ -63,9 +63,10 @@ public class Fishing : MAPI.Mod
                 Location = loc,
                 containerType = IC.Container.Shiny,
             };
-            var egg = IC.Finder.GetItem("Rancid_Egg")!;
-            var s = IC.Util.ShinyUtility.MakeNewShiny(p, egg, IC.FlingType.Everywhere);
-            s.transform.position = new UE.Vector3(56.1f, 15.6f, s.transform.position.z);
+            p.Items.Add(IC.Finder.GetItem("Rancid_Egg")!);
+            var ci = new IC.ContainerInfo(IC.Container.Shiny, p, IC.FlingType.Everywhere);
+            var s = IC.Util.ShinyUtility.MakeNewMultiItemShiny(ci);
+            s.transform.position = new UE.Vector3(56.1f, 12.6f, s.transform.position.z);
             s.SetActive(true);
         });
         obj.SetActive(true);
