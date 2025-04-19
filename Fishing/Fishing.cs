@@ -37,12 +37,36 @@ public class Fishing : MAPI.Mod
         var fsm = obj.LocateMyFSM("Shop Region");
         fsm.GetFsmFloat("Move To X").Value = 58.1f;
         var arrow = fsm.GetFsmGameObject("Prompt");
-        fsm.GetState("Init").AppendAction(() => {
+        fsm.GetState("Init").AppendAction(() =>
+        {
             var prompts = FindImmediateChild(arrow.Value, "Labels");
             var sit = FindImmediateChild(prompts, "Sit");
             UE.Object.Destroy(sit.GetComponent<SetTextMeshProGameText>());
             var text = sit.GetComponent<TMP.TextMeshPro>();
             text.text = "FISH";
+        });
+        fsm.GetState("Sit").AppendAction(() =>
+        {
+            var loc = new IC.Locations.CoordinateLocation()
+            {
+                name = "Fishing Spot #1",
+                sceneName = IC.SceneNames.Fungus1_26,
+                flingType = IC.FlingType.Everywhere,
+                forceShiny = true,
+                x = 0,
+                y = 0,
+                elevation = 0,
+            };
+            loc.AddTag<IC.Tags.ShinyFlingTag>().fling = IC.ShinyFling.Right;
+            var p = new IC.Placements.MutablePlacement("Fishing Spot #1")
+            {
+                Location = loc,
+                containerType = IC.Container.Shiny,
+            };
+            var egg = IC.Finder.GetItem("Rancid_Egg")!;
+            var s = IC.Util.ShinyUtility.MakeNewShiny(p, egg, IC.FlingType.Everywhere);
+            s.transform.position = new UE.Vector3(56.1f, 15.6f, s.transform.position.z);
+            s.SetActive(true);
         });
         obj.SetActive(true);
     }
