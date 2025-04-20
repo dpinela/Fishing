@@ -1,3 +1,4 @@
+using SC = System.Collections;
 using IC = ItemChanger;
 using UE = UnityEngine;
 using USM = UnityEngine.SceneManagement;
@@ -9,15 +10,11 @@ internal class FishingLocation : IC.Locations.AutoLocation
 {
     public static UE.GameObject? FishingSpotPrefab;
 
-    public FishingLocation(IC.ShinyFling flingDirection)
-    {
-        AddTag<IC.Tags.ShinyFlingTag>().fling = flingDirection;
-    }
-
     public float MarkerX;
     public float MarkerY;
     public float ShinySourceX;
     public float ShinySourceY;
+    public IC.ShinyFling FlingDirection;
 
     protected override void OnLoad()
     {
@@ -45,18 +42,42 @@ internal class FishingLocation : IC.Locations.AutoLocation
             var text = sit.GetComponent<TMP.TextMeshPro>();
             text.text = "FISH";
         });
-        var fished = false;
+
+        var firstUncaughtItem = 0;
+        SC.IEnumerator Fish()
+        {
+            for (var i = firstUncaughtItem; i < Placement.Items.Count; i++)
+            {
+                if (Placement.Items[i].IsObtained())
+                {
+                    continue;
+                }
+                yield return new UE.WaitForSeconds(2);
+                var s = IC.Util.ShinyUtility.MakeNewShiny(Placement, Placement.Items[i], IC.FlingType.StraightUp);
+                s.transform.position = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
+                IC.Util.ShinyUtility.SetShinyFling(s.LocateMyFSM("Shiny Control"), FlingDirection);
+                s.SetActive(true);
+                firstUncaughtItem = i + 1;
+            }
+        };
+
+        SC.IEnumerator? fishingCoroutine = null;
+
         fsm.GetState("Sit").AppendAction(() =>
         {
-            if (fished || Placement.AllObtained())
+            if (fishingCoroutine != null)
             {
-                return;
+                fsm.StopCoroutine(fishingCoroutine);
             }
-            var ci = new IC.ContainerInfo(IC.Container.Shiny, Placement, IC.FlingType.Everywhere);
-            var s = IC.Util.ShinyUtility.MakeNewMultiItemShiny(ci);
-            s.transform.position = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
-            s.SetActive(true);
-            fished = true;
+            fishingCoroutine = Fish();
+            fsm.StartCoroutine(fishingCoroutine);
+        });
+        fsm.GetState("Rise").AppendAction(() =>
+        {
+            if (fishingCoroutine != null)
+            {
+                fsm.StopCoroutine(fishingCoroutine);
+            }
         });
     }
 
@@ -79,7 +100,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
         Location = this,
     };
 
-    public static readonly FishingLocation LakeOfUnn = new(IC.ShinyFling.Right)
+    public static readonly FishingLocation LakeOfUnn = new()
     {
         name = "Fishing Spot-Lake of Unn",
         sceneName = IC.SceneNames.Fungus1_26,
@@ -87,5 +108,6 @@ internal class FishingLocation : IC.Locations.AutoLocation
         MarkerY = 15.6f,
         ShinySourceX = 56.1f,
         ShinySourceY = 11.6f,
+        FlingDirection = IC.ShinyFling.Right,
     };
 }

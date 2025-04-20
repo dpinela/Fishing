@@ -31,7 +31,12 @@ public class Fishing : MAPI.Mod
             IC.ItemChangerMod.CreateSettingsProfile(overwrite: false, createDefaultModules: false);
             var p = IC.Finder.GetLocation("Fishing Spot-Lake of Unn")!
                 .Wrap()
-                .Add(IC.Finder.GetItem("Rancid_Egg")!);
+                .Add(IC.Finder.GetItem("Rancid_Egg")!)
+                .Add(IC.Finder.GetItem("Grub")!)
+                .Add(IC.Finder.GetItem("Mantis_Claw")!)
+                .Add(IC.Finder.GetItem("Grub")!)
+                .Add(IC.Finder.GetItem("Lumafly_Escape")!)
+                .Add(IC.Finder.GetItem("Mimic_Grub")!);
             IC.ItemChangerMod.AddPlacements(new CG.List<IC.AbstractPlacement> {p});
         }
         catch (System.Exception err)
