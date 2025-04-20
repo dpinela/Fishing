@@ -45,16 +45,18 @@ internal class FishingLocation : IC.Locations.AutoLocation
             var text = sit.GetComponent<TMP.TextMeshPro>();
             text.text = "FISH";
         });
-        if (Placement.AllObtained())
-        {
-            return;
-        }
+        var fished = false;
         fsm.GetState("Sit").AppendAction(() =>
         {
+            if (fished || Placement.AllObtained())
+            {
+                return;
+            }
             var ci = new IC.ContainerInfo(IC.Container.Shiny, Placement, IC.FlingType.Everywhere);
             var s = IC.Util.ShinyUtility.MakeNewMultiItemShiny(ci);
             s.transform.position = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
             s.SetActive(true);
+            fished = true;
         });
     }
 
