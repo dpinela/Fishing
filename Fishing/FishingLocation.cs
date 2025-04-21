@@ -14,7 +14,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
     public float MarkerY;
     public float ShinySourceX;
     public float ShinySourceY;
-    public IC.ShinyFling FlingDirection;
+    public FacingDirection Direction;
 
     protected override void OnLoad()
     {
@@ -30,9 +30,11 @@ internal class FishingLocation : IC.Locations.AutoLocation
     {
         var obj = UE.Object.Instantiate(FishingSpotPrefab!);
         obj.transform.position = new UE.Vector3(MarkerX, MarkerY, obj.transform.position.z);
+        obj.transform.localScale = new UE.Vector3(Direction == FacingDirection.Right ? 1 : -1, 1, obj.transform.localScale.z);
         obj.SetActive(true);
         var fsm = obj.LocateMyFSM("Shop Region");
         fsm.GetFsmFloat("Move To X").Value = MarkerX;
+        fsm.GetFsmBool("Face Hero Right").Value = Direction == FacingDirection.Right;
         var arrow = fsm.GetFsmGameObject("Prompt");
         fsm.GetState("Init").AppendAction(() =>
         {
@@ -44,6 +46,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
         });
 
         var firstUncaughtItem = 0;
+        var flingDirection = Direction == FacingDirection.Right ? IC.ShinyFling.Left : IC.ShinyFling.Right;
         SC.IEnumerator Fish()
         {
             for (var i = firstUncaughtItem; i < Placement.Items.Count; i++)
@@ -55,7 +58,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
                 yield return new UE.WaitForSeconds(2);
                 var s = IC.Util.ShinyUtility.MakeNewShiny(Placement, Placement.Items[i], IC.FlingType.StraightUp);
                 s.transform.position = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
-                IC.Util.ShinyUtility.SetShinyFling(s.LocateMyFSM("Shiny Control"), FlingDirection);
+                IC.Util.ShinyUtility.SetShinyFling(s.LocateMyFSM("Shiny Control"), flingDirection);
                 s.SetActive(true);
                 firstUncaughtItem = i + 1;
             }
@@ -100,14 +103,23 @@ internal class FishingLocation : IC.Locations.AutoLocation
         Location = this,
     };
 
+    // how high a fishing spot should be above the Knight's position on the ground
+    private const float SitRegionElevation = 0.7f;
+
     public static readonly FishingLocation LakeOfUnn = new()
     {
         name = "Fishing Spot-Lake of Unn",
         sceneName = IC.SceneNames.Fungus1_26,
-        MarkerX = 58.1f,
-        MarkerY = 15.6f,
+        MarkerX = 58.9f,
+        MarkerY = 16.1f,
         ShinySourceX = 56.1f,
         ShinySourceY = 11.6f,
-        FlingDirection = IC.ShinyFling.Right,
+        Direction = FacingDirection.Left,
     };
+}
+
+internal enum FacingDirection
+{
+    Left,
+    Right
 }

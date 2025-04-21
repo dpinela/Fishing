@@ -10,6 +10,11 @@ internal static class PlayMakerExtensions
         return fsm.FsmVariables.FloatVariables.FirstOrDefault(v => v.Name == name);
     }
 
+    internal static PM.FsmBool GetFsmBool(this PlayMakerFSM fsm, string name)
+    {
+        return fsm.FsmVariables.BoolVariables.FirstOrDefault(v => v.Name == name);
+    }
+
     internal static PM.FsmGameObject GetFsmGameObject(this PlayMakerFSM fsm, string name)
     {
         return fsm.FsmVariables.GameObjectVariables.FirstOrDefault(v => v.Name == name);

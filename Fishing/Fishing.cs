@@ -8,6 +8,13 @@ namespace Fishing;
 
 public class Fishing : MAPI.Mod
 {
+    private static Fishing? Instance;
+
+    internal static void LogInfo(string msg)
+    {
+        Instance!.Log(msg);
+    }
+
     private const string SitTemplateName = "Ghost NPC/Dreamnail Hit/Sit Region";
 
     public override CG.List<(string, string)> GetPreloadNames() => new()
@@ -17,6 +24,8 @@ public class Fishing : MAPI.Mod
 
     public override void Initialize(CG.Dictionary<string, CG.Dictionary<string, UE.GameObject>> preloads)
     {
+        Instance = this;
+
         FishingLocation.FishingSpotPrefab = preloads[IC.SceneNames.Ruins_Bathhouse][SitTemplateName];
 
         IC.Finder.DefineCustomLocation(FishingLocation.LakeOfUnn);
