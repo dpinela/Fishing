@@ -25,6 +25,12 @@ internal static class PlayMakerExtensions
         return fsm.FsmStates.FirstOrDefault(s => s.Name == name);
     }
 
+    internal static T FindAction<T>(this PM.FsmState s, System.Func<T, bool> pred)
+    where T : PM.FsmStateAction
+    {
+        return s.Actions.OfType<T>().First(pred);
+    }
+
     internal static void AppendAction(this PM.FsmState s, System.Action a)
     {
         SpliceAction(s, s.Actions.Length, a);

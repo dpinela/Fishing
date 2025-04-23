@@ -17,6 +17,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
     public float ShinySourceX;
     public float ShinySourceY;
     public FacingDirection Direction;
+    public SplashColor SplashColor;
 
     protected override void OnLoad()
     {
@@ -49,10 +50,9 @@ internal class FishingLocation : IC.Locations.AutoLocation
 
         var swr = UE.GameObject.Find("Surface Water Region").LocateMyFSM("Surface Water Region");
         var eff = swr.GetState("Splash Out effects");
-        var blue = swr.GetState("Blue");
         // will be black instead for Abyss and DV
-        var dripPrefab = ((PM.Actions.SetGameObject)blue.Actions[3]).gameObject.Value;
-        var splashPrefab = ((PM.Actions.SetGameObject)blue.Actions[1]).gameObject.Value;
+        var prefabStateName = SplashColor == SplashColor.Black ? "Black" : "Blue";
+        var (dripPrefab, splashPrefab) = ExtractSplashPrefabs(swr.GetState(prefabStateName));
         var splashAudio = (UE.AudioClip)((PM.Actions.AudioPlayerOneShotSingle)eff.Actions[1]).audioClip.Value;
 
         var firstUncaughtItem = 0;
@@ -99,6 +99,13 @@ internal class FishingLocation : IC.Locations.AutoLocation
         });
     }
 
+    private static (UE.GameObject dripper, UE.GameObject splash) ExtractSplashPrefabs(PM.FsmState state)
+    {
+        var splashAct = state.FindAction((PM.Actions.SetGameObject s) => s.variable.Name == "Splash Out Obj");
+        var dripperAct = state.FindAction((PM.Actions.SetGameObject s) => s.variable.Name == "Dripper Obj");
+        return (dripperAct.gameObject.Value, splashAct.gameObject.Value);
+    }
+
     private static UE.GameObject FindImmediateChild(UE.GameObject parent, string childName)
     {
         var transform = parent.transform;
@@ -132,6 +139,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 55.5f,
             ShinySourceY = 11.28f,
             Direction = FacingDirection.Left,
+            SplashColor = SplashColor.White,
         },
         new()
         {
@@ -139,9 +147,10 @@ internal class FishingLocation : IC.Locations.AutoLocation
             sceneName = IC.SceneNames.Deepnest_10,
             MarkerX = 58.8f,
             MarkerY = 10.4f + SitRegionElevation,
-            ShinySourceX = 55.1f,
+            ShinySourceX = 56.6f,
             ShinySourceY = 4.73f,
             Direction = FacingDirection.Left,
+            SplashColor = SplashColor.Black,
         },
         new()
         {
@@ -152,6 +161,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 28.1f,
             ShinySourceY = 23.09f,
             Direction = FacingDirection.Right,
+            SplashColor = SplashColor.White,
         },
         new()
         {
@@ -162,6 +172,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 223.9f,
             ShinySourceY = 23.09f,
             Direction = FacingDirection.Left,
+            SplashColor = SplashColor.White,
         },
         new()
         {
@@ -172,6 +183,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 99.7f,
             ShinySourceY = 8.23f,
             Direction = FacingDirection.Right,
+            SplashColor = SplashColor.White,
         },
         new()
         {
@@ -182,6 +194,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 111.3f,
             ShinySourceY = 5.89f,
             Direction = FacingDirection.Left,
+            SplashColor = SplashColor.White,
         },
         new()
         {
@@ -192,6 +205,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 121.3f,
             ShinySourceY = 5.84f,
             Direction = FacingDirection.Left,
+            SplashColor = SplashColor.White,
         },
         new()
         {
@@ -202,6 +216,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 75.4f,
             ShinySourceY = 17.71f,
             Direction = FacingDirection.Right,
+            SplashColor = SplashColor.White,
         },
         new()
         {
@@ -210,8 +225,9 @@ internal class FishingLocation : IC.Locations.AutoLocation
             MarkerX = 117.6f,
             MarkerY = 22.4f + SitRegionElevation,
             ShinySourceX = 120.0f,
-            ShinySourceY = 18.25f, // must be a little bit above water
+            ShinySourceY = 18.25f, // must be a little bit above water so that shinies reach the platform
             Direction = FacingDirection.Right,
+            SplashColor = SplashColor.Black,
         },
         new()
         {
@@ -222,6 +238,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceX = 145.9f,
             ShinySourceY = 12.25f,
             Direction = FacingDirection.Right,
+            SplashColor = SplashColor.White,
         }
     };
     // major pools:
@@ -243,4 +260,10 @@ internal enum FacingDirection
 {
     Left,
     Right
+}
+
+internal enum SplashColor
+{
+    White,
+    Black
 }
