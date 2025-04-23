@@ -1,4 +1,5 @@
 using SC = System.Collections;
+using CG = System.Collections.Generic;
 using IC = ItemChanger;
 using UE = UnityEngine;
 using PM = HutongGames.PlayMaker;
@@ -49,6 +50,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
         var swr = UE.GameObject.Find("Surface Water Region").LocateMyFSM("Surface Water Region");
         var eff = swr.GetState("Splash Out effects");
         var blue = swr.GetState("Blue");
+        // will be black instead for Abyss and DV
         var dripPrefab = ((PM.Actions.SetGameObject)blue.Actions[3]).gameObject.Value;
         var splashPrefab = ((PM.Actions.SetGameObject)blue.Actions[1]).gameObject.Value;
         var splashAudio = (UE.AudioClip)((PM.Actions.AudioPlayerOneShotSingle)eff.Actions[1]).audioClip.Value;
@@ -63,7 +65,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
                 {
                     continue;
                 }
-                yield return new UE.WaitForSeconds(2);
+                yield return new UE.WaitForSeconds(3);
                 var s = IC.Util.ShinyUtility.MakeNewShiny(Placement, Placement.Items[i], IC.FlingType.StraightUp);
                 var shinyPos = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
                 s.transform.position = shinyPos;
@@ -117,18 +119,110 @@ internal class FishingLocation : IC.Locations.AutoLocation
     };
 
     // how high a fishing spot should be above the Knight's position on the ground
-    // MarkerX should be about 1.5 units from the shore
     private const float SitRegionElevation = 0.7f;
 
-    public static readonly FishingLocation LakeOfUnn = new()
+    public static readonly CG.List<FishingLocation> Locations = new()
     {
-        name = "Fishing Spot-Lake of Unn",
-        sceneName = IC.SceneNames.Fungus1_26,
-        MarkerX = 58.9f,
-        MarkerY = 16.1f,
-        ShinySourceX = 55.5f,
-        ShinySourceY = 11.28f,
-        Direction = FacingDirection.Left,
+        new()
+        {
+            name = "Fishing_Spot-Lake_of_Unn",
+            sceneName = IC.SceneNames.Fungus1_26,
+            MarkerX = 58.9f,
+            MarkerY = 15.4f + SitRegionElevation,
+            ShinySourceX = 55.5f,
+            ShinySourceY = 11.28f,
+            Direction = FacingDirection.Left,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Distant_Village",
+            sceneName = IC.SceneNames.Deepnest_10,
+            MarkerX = 58.8f,
+            MarkerY = 10.4f + SitRegionElevation,
+            ShinySourceX = 55.1f,
+            ShinySourceY = 4.73f,
+            Direction = FacingDirection.Left,
+        },
+        new()
+        {
+            name = "Fishing_Spot-West_Lake_Shore",
+            sceneName = IC.SceneNames.Crossroads_50,
+            MarkerX = 25.4f,
+            MarkerY = 24.4f + SitRegionElevation,
+            ShinySourceX = 28.1f,
+            ShinySourceY = 23.09f,
+            Direction = FacingDirection.Right,
+        },
+        new()
+        {
+            name = "Fishing_Spot-East_Lake_Shore",
+            sceneName = IC.SceneNames.Crossroads_50,
+            MarkerX = 225.9f,
+            MarkerY = 25.4f + SitRegionElevation,
+            ShinySourceX = 223.9f, // needs retesting
+            ShinySourceY = 23.09f,
+            Direction = FacingDirection.Left,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Waterways_Acid_Sluice",
+            sceneName = IC.SceneNames.Waterways_06,
+            MarkerX = 97.0f,
+            MarkerY = 12.2f + SitRegionElevation,
+            ShinySourceX = 99.9f, // needs retesting
+            ShinySourceY = 8.23f,
+            Direction = FacingDirection.Right,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Waterways_Central_Pool",
+            sceneName = IC.SceneNames.Waterways_04,
+            MarkerX = 112.9f,
+            MarkerY = 8.4f + SitRegionElevation,
+            ShinySourceX = 111.3f, // needs retesting
+            ShinySourceY = 5.89f,
+            Direction = FacingDirection.Left,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Waterways_Mask_Shard_Pool",
+            sceneName = IC.SceneNames.Waterways_04b,
+            MarkerX = 123.7f,
+            MarkerY = 8.4f + SitRegionElevation,
+            ShinySourceX = 121.3f, // needs retesting
+            ShinySourceY = 5.84f,
+            Direction = FacingDirection.Left,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Waterways_Long_Acid_Pool",
+            sceneName = IC.SceneNames.Waterways_14,
+            MarkerX = 73.1f,
+            MarkerY = 20.4f + SitRegionElevation,
+            ShinySourceX = 75.4f, // needs retesting
+            ShinySourceY = 17.71f,
+            Direction = FacingDirection.Right,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Abyss_Lighthouse",
+            sceneName = IC.SceneNames.Abyss_09,
+            MarkerX = 117.6f,
+            MarkerY = 22.4f + SitRegionElevation,
+            ShinySourceX = 120.0f,
+            ShinySourceY = 18.25f, // must be a little bit above water
+            Direction = FacingDirection.Right,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Godhome_Atrium",
+            sceneName = IC.SceneNames.GG_Atrium,
+            MarkerX = 142.4f,
+            MarkerY = 14.4f + SitRegionElevation,
+            ShinySourceX = 145.9f,
+            ShinySourceY = 12.25f,
+            Direction = FacingDirection.Right,
+        }
     };
     // major pools:
     // - Lake of Unn

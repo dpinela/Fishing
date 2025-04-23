@@ -28,7 +28,10 @@ public class Fishing : MAPI.Mod
 
         FishingLocation.FishingSpotPrefab = preloads[IC.SceneNames.Ruins_Bathhouse][SitTemplateName];
 
-        IC.Finder.DefineCustomLocation(FishingLocation.LakeOfUnn);
+        foreach (var loc in FishingLocation.Locations)
+        {
+            IC.Finder.DefineCustomLocation(loc);
+        }
 
         On.UIManager.StartNewGame += PlaceFishingSpots;
     }
@@ -38,15 +41,20 @@ public class Fishing : MAPI.Mod
         try
         {
             IC.ItemChangerMod.CreateSettingsProfile(overwrite: false, createDefaultModules: false);
-            var p = IC.Finder.GetLocation("Fishing Spot-Lake of Unn")!
-                .Wrap()
-                .Add(IC.Finder.GetItem("Rancid_Egg")!)
-                .Add(IC.Finder.GetItem("Grub")!)
-                .Add(IC.Finder.GetItem("Mantis_Claw")!)
-                .Add(IC.Finder.GetItem("Grub")!)
-                .Add(IC.Finder.GetItem("Lumafly_Escape")!)
-                .Add(IC.Finder.GetItem("Mimic_Grub")!);
-            IC.ItemChangerMod.AddPlacements(new CG.List<IC.AbstractPlacement> {p});
+            var ps = new CG.List<IC.AbstractPlacement>();
+            foreach (var loc in FishingLocation.Locations)
+            {
+                var p = IC.Finder.GetLocation(loc.name)!
+                    .Wrap()
+                    .Add(IC.Finder.GetItem("Rancid_Egg")!)
+                    .Add(IC.Finder.GetItem("Grub")!)
+                    .Add(IC.Finder.GetItem("Mantis_Claw")!)
+                    .Add(IC.Finder.GetItem("Grub")!)
+                    .Add(IC.Finder.GetItem("Lumafly_Escape")!)
+                    .Add(IC.Finder.GetItem("Mimic_Grub")!);
+                ps.Add(p);
+            }
+            IC.ItemChangerMod.AddPlacements(ps);
         }
         catch (System.Exception err)
         {
