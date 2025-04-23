@@ -159,7 +159,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             sceneName = IC.SceneNames.Crossroads_50,
             MarkerX = 225.9f,
             MarkerY = 25.4f + SitRegionElevation,
-            ShinySourceX = 223.9f, // needs retesting
+            ShinySourceX = 223.9f,
             ShinySourceY = 23.09f,
             Direction = FacingDirection.Left,
         },
@@ -169,7 +169,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             sceneName = IC.SceneNames.Waterways_06,
             MarkerX = 97.0f,
             MarkerY = 12.2f + SitRegionElevation,
-            ShinySourceX = 99.9f, // needs retesting
+            ShinySourceX = 99.7f,
             ShinySourceY = 8.23f,
             Direction = FacingDirection.Right,
         },
@@ -179,7 +179,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             sceneName = IC.SceneNames.Waterways_04,
             MarkerX = 112.9f,
             MarkerY = 8.4f + SitRegionElevation,
-            ShinySourceX = 111.3f, // needs retesting
+            ShinySourceX = 111.3f,
             ShinySourceY = 5.89f,
             Direction = FacingDirection.Left,
         },
@@ -189,7 +189,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             sceneName = IC.SceneNames.Waterways_04b,
             MarkerX = 123.7f,
             MarkerY = 8.4f + SitRegionElevation,
-            ShinySourceX = 121.3f, // needs retesting
+            ShinySourceX = 121.3f,
             ShinySourceY = 5.84f,
             Direction = FacingDirection.Left,
         },
@@ -199,7 +199,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             sceneName = IC.SceneNames.Waterways_14,
             MarkerX = 73.1f,
             MarkerY = 20.4f + SitRegionElevation,
-            ShinySourceX = 75.4f, // needs retesting
+            ShinySourceX = 75.4f,
             ShinySourceY = 17.71f,
             Direction = FacingDirection.Right,
         },
