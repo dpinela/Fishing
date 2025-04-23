@@ -1,6 +1,7 @@
 using SC = System.Collections;
 using IC = ItemChanger;
 using UE = UnityEngine;
+using PM = HutongGames.PlayMaker;
 using USM = UnityEngine.SceneManagement;
 using TMP = TMPro;
 
@@ -45,6 +46,13 @@ internal class FishingLocation : IC.Locations.AutoLocation
             text.text = "FISH";
         });
 
+        var swr = UE.GameObject.Find("Surface Water Region").LocateMyFSM("Surface Water Region");
+        var eff = swr.GetState("Splash Out effects");
+        var blue = swr.GetState("Blue");
+        var dripPrefab = ((PM.Actions.SetGameObject)blue.Actions[3]).gameObject.Value;
+        var splashPrefab = ((PM.Actions.SetGameObject)blue.Actions[1]).gameObject.Value;
+        var splashAudio = (UE.AudioClip)((PM.Actions.AudioPlayerOneShotSingle)eff.Actions[1]).audioClip.Value;
+
         var firstUncaughtItem = 0;
         var flingDirection = Direction == FacingDirection.Right ? IC.ShinyFling.Left : IC.ShinyFling.Right;
         SC.IEnumerator Fish()
@@ -57,10 +65,15 @@ internal class FishingLocation : IC.Locations.AutoLocation
                 }
                 yield return new UE.WaitForSeconds(2);
                 var s = IC.Util.ShinyUtility.MakeNewShiny(Placement, Placement.Items[i], IC.FlingType.StraightUp);
-                s.transform.position = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
+                var shinyPos = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
+                s.transform.position = shinyPos;
                 IC.Util.ShinyUtility.SetShinyFling(s.LocateMyFSM("Shiny Control"), flingDirection);
                 s.SetActive(true);
                 firstUncaughtItem = i + 1;
+
+                dripPrefab.Spawn(shinyPos, UE.Quaternion.identity);
+                splashPrefab.Spawn(shinyPos, UE.Quaternion.identity);
+                IC.Internal.SoundManager.PlayClipAtPoint(splashAudio, shinyPos);
             }
         };
 
@@ -104,6 +117,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
     };
 
     // how high a fishing spot should be above the Knight's position on the ground
+    // MarkerX should be about 1.5 units from the shore
     private const float SitRegionElevation = 0.7f;
 
     public static readonly FishingLocation LakeOfUnn = new()
@@ -112,10 +126,23 @@ internal class FishingLocation : IC.Locations.AutoLocation
         sceneName = IC.SceneNames.Fungus1_26,
         MarkerX = 58.9f,
         MarkerY = 16.1f,
-        ShinySourceX = 56.1f,
-        ShinySourceY = 11.6f,
+        ShinySourceX = 55.5f,
+        ShinySourceY = 11.28f,
         Direction = FacingDirection.Left,
     };
+    // major pools:
+    // - Lake of Unn
+    // - Distant Village
+    // - Blue Lake (east/west)
+    // - Acid pool west of Waterways spike tunnel
+    // - East side of both Waterways long pools
+    // - Long acid pool above Isma's Grove
+    // - Abyss east of the Lighthouse
+    // - Godhome
+    // minor pools:
+    // - QGA (east/west)
+    // - King's Station
+    // - Mantis Village (east/west)
 }
 
 internal enum FacingDirection

@@ -37,6 +37,9 @@
     <Reference Include="UnityEngine.Physics2DModule">
       <HintPath>$(HK15PATH)/UnityEngine.Physics2DModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(HK15PATH)/UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
     <Reference Include="ItemChanger">
       <HintPath>$(HK15PATH)/Mods/ItemChanger/ItemChanger.dll</HintPath>
     </Reference>
