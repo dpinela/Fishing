@@ -37,10 +37,11 @@ public class Fishing : MAPI.Mod
             var tag = loc.AddTag<IC.Tags.InteropTag>();
             tag.Message = "RandoSupplementalMetadata";
             tag.Properties["ModSource"] = nameof(Fishing);
-            tag.Properties["MapLocations"] = new (string scene, float x, float y)[]
-            {
-                (loc.sceneName!, loc.MarkerX, loc.MarkerY)
-            };
+            tag.Properties["PoolGroup"] = "Fishing";
+            var location = (loc.sceneName!, loc.MarkerX, loc.MarkerY);
+            tag.Properties["WorldMapLocation"] = location;
+            // deprecated but still required by the current RandoMapMod release as of this writing
+            tag.Properties["WorldMapLocations"] = new (string, float, float)[] { location };
             IC.Finder.DefineCustomLocation(loc);
         }
 
