@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Fishing_Spot-Lake_of_Unn",
+        "logic": "Fungus1_26[door_SlugShrine]"
+    },
+    {
+        "name": "Fishing_Spot-Distant_Village",
+        "logic": "Deepnest_10[right3]"
+    },
+    {
+        "name": "Fishing_Spot-West_Lake_Shore",
+        "logic": "Crossroads_50[left1] | Crossroads_50[right1] + (LEFTSUPERDASH | SWIM)"
+    },
+    {
+        "name": "Fishing_Spot-East_Lake_Shore",
+        "logic": "Crossroads_50[right1]"
+    },
+    {
+        "name": "Fishing_Spot-Waterways_Central_Pool",
+        "logic": "*Grub-Waterways_Main"
+    },
+    {
+        "name": "Fishing_Spot-Waterways_Mask_Shard_Pool",
+        "logic": "Waterways_04b[right2]"
+    },
+    {
+        "name": "Fishing_Spot-Waterways_Long_Acid_Pool",
+        "logic": "Waterways_14[bot1] + ANYCLAW | Waterways_14[bot2] + (RIGHTCLAW | LEFTCLAW + WINGS) + (LEFTSUPERDASH | ACID)"
+    },
+    {
+        "name": "Fishing_Spot-Abyss_Lighthouse",
+        "logic": "Abyss_09"
+    },
+    {
+        "name": "Fishing_Spot-Godhome_Atrium",
+        "logic": "GG_Atrium | GG_Workshop"
+    }
+]

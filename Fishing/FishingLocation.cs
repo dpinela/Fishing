@@ -176,17 +176,6 @@ internal class FishingLocation : IC.Locations.AutoLocation
         },
         new()
         {
-            name = "Fishing_Spot-Waterways_Acid_Sluice",
-            sceneName = IC.SceneNames.Waterways_06,
-            MarkerX = 97.0f,
-            MarkerY = 12.2f + SitRegionElevation,
-            ShinySourceX = 99.7f,
-            ShinySourceY = 8.23f,
-            Direction = FacingDirection.Right,
-            SplashColor = SplashColor.White,
-        },
-        new()
-        {
             name = "Fishing_Spot-Waterways_Central_Pool",
             sceneName = IC.SceneNames.Waterways_04,
             MarkerX = 112.9f,

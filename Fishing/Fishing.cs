@@ -1,8 +1,12 @@
+using IO = System.IO;
 using MAPI = Modding;
-using static Modding.Utils.UnityExtensions;
 using UE = UnityEngine;
 using CG = System.Collections.Generic;
 using IC = ItemChanger;
+using MC = MenuChanger;
+using RC = RandomizerCore;
+using Rando = RandomizerMod;
+using RandoData = RandomizerMod.RandomizerData;
 
 namespace Fishing;
 
@@ -30,37 +34,100 @@ public class Fishing : MAPI.Mod
 
         foreach (var loc in FishingLocation.Locations)
         {
+            var tag = loc.AddTag<IC.Tags.InteropTag>();
+            tag.Message = "RandoSupplementalMetadata";
+            tag.Properties["ModSource"] = nameof(Fishing);
+            tag.Properties["MapLocations"] = new (string scene, float x, float y)[]
+            {
+                (loc.sceneName!, loc.MarkerX, loc.MarkerY)
+            };
             IC.Finder.DefineCustomLocation(loc);
         }
 
-        On.UIManager.StartNewGame += PlaceFishingSpots;
+        Rando.RC.RequestBuilder.OnUpdate.Subscribe(30, ApplyLocationSettings);
+        // must happen before ApplyMultiLocationRebalancing in RandomizerMod
+        Rando.RC.RequestBuilder.OnUpdate.Subscribe(49, AddLocationsToPool);
+        // run just after Transcendence so its logic patches also apply to our locations
+        Rando.RC.RCData.RuntimeLogicOverride.Subscribe(50.1f, HookLogic);
+        Rando.Menu.RandomizerMenuAPI.AddMenuPage(_ => {}, BuildConnectionMenuButton);
+        Rando.Logging.SettingsLog.AfterLogSettings += LogRandoSettings;
     }
 
-    private void PlaceFishingSpots(On.UIManager.orig_StartNewGame orig, UIManager self, bool permaDeath, bool bossRush)
+    private ModSettings settings = new();
+
+    public void OnLoadGlobal(ModSettings s)
     {
-        try
+        settings = s;
+    }
+
+    public ModSettings OnSaveGlobal() => settings;
+
+    private void ApplyLocationSettings(Rando.RC.RequestBuilder rb)
+    {
+        if (!settings.Enabled)
         {
-            IC.ItemChangerMod.CreateSettingsProfile(overwrite: false, createDefaultModules: false);
-            var ps = new CG.List<IC.AbstractPlacement>();
-            foreach (var loc in FishingLocation.Locations)
+            return;
+        }
+        foreach (var loc in FishingLocation.Locations)
+        {
+            rb.EditLocationRequest(loc.name, info =>
             {
-                var p = IC.Finder.GetLocation(loc.name)!
-                    .Wrap()
-                    .Add(IC.Finder.GetItem("Rancid_Egg")!)
-                    .Add(IC.Finder.GetItem("Grub")!)
-                    .Add(IC.Finder.GetItem("Mantis_Claw")!)
-                    .Add(IC.Finder.GetItem("Grub")!)
-                    .Add(IC.Finder.GetItem("Lumafly_Escape")!)
-                    .Add(IC.Finder.GetItem("Mimic_Grub")!);
-                ps.Add(p);
-            }
-            IC.ItemChangerMod.AddPlacements(ps);
+                info.getLocationDef = () => new()
+                {
+                    Name = loc.name,
+                    SceneName = loc.sceneName!,
+                    FlexibleCount = true,
+                    AdditionalProgressionPenalty = true,
+                };
+            });
         }
-        catch (System.Exception err)
+    }
+
+    private void AddLocationsToPool(Rando.RC.RequestBuilder rb)
+    {
+        if (!settings.Enabled)
         {
-            LogError($"error initializing fishing spots: {err}");
+            return;
         }
-        orig(self, permaDeath, bossRush);
+        foreach (var loc in FishingLocation.Locations)
+        {
+            rb.AddLocationByName(loc.name);
+        }
+    }
+
+    private void HookLogic(Rando.Settings.GenerationSettings gs, RC.Logic.LogicManagerBuilder lmb)
+    {
+        var modDir = IO.Path.GetDirectoryName(typeof(Fishing).Assembly.Location);
+        var jsonFmt = new RC.Json.JsonLogicFormat();
+        using (var locations = IO.File.OpenRead(IO.Path.Combine(modDir, "locations.json")))
+        {
+            lmb.DeserializeFile(RC.Logic.LogicFileType.Locations, jsonFmt, locations);
+        }
+    }
+
+    private bool BuildConnectionMenuButton(MC.MenuPage landingPage, out MC.MenuElements.SmallButton settingsButton)
+    {
+        var button = new MC.MenuElements.SmallButton(landingPage, "Fishing");
+
+        void UpdateButtonColor()
+        {
+            button.Text.color = settings.Enabled ? MC.Colors.TRUE_COLOR : MC.Colors.DEFAULT_COLOR;
+        }
+
+        UpdateButtonColor();
+        button.OnClick += () =>
+        {
+            settings.Enabled = !settings.Enabled;
+            UpdateButtonColor();
+        };
+        settingsButton = button;
+        return true;
+    }
+
+    private void LogRandoSettings(Rando.Logging.LogArguments args, IO.TextWriter w)
+    {
+        w.WriteLine("Logging Fishing settings:");
+        w.WriteLine(RandoData.JsonUtil.Serialize(settings));
     }
 
     public override string GetVersion() => "1.0";

@@ -40,8 +40,23 @@
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>$(HK15PATH)/UnityEngine.AudioModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(HK15PATH)/UnityEngine.UI.dll</HintPath>
+    </Reference>
     <Reference Include="ItemChanger">
       <HintPath>$(HK15PATH)/Mods/ItemChanger/ItemChanger.dll</HintPath>
+    </Reference>
+    <Reference Include="MenuChanger">
+      <HintPath>$(HK15PATH)/Mods/MenuChanger/MenuChanger.dll</HintPath>
+    </Reference>
+    <Reference Include="RandomizerMod">
+      <HintPath>$(HK15PATH)/Mods/Randomizer 4/RandomizerMod.dll</HintPath>
+    </Reference>
+    <Reference Include="RandomizerCore">
+      <HintPath>$(HK15PATH)/Mods/RandomizerCore/RandomizerCore.dll</HintPath>
+    </Reference>
+    <Reference Include="RandomizerCore.Json">
+      <HintPath>$(HK15PATH)/Mods/RandomizerCore.Json/RandomizerCore.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
