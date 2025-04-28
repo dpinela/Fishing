@@ -98,6 +98,10 @@ public class Fishing : MAPI.Mod
 
     private void HookLogic(Rando.Settings.GenerationSettings gs, RC.Logic.LogicManagerBuilder lmb)
     {
+        if (!settings.Enabled)
+        {
+            return;
+        }
         var modDir = IO.Path.GetDirectoryName(typeof(Fishing).Assembly.Location);
         var jsonFmt = new RC.Json.JsonLogicFormat();
         using (var locations = IO.File.OpenRead(IO.Path.Combine(modDir, "locations.json")))

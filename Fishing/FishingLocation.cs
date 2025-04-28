@@ -19,14 +19,28 @@ internal class FishingLocation : IC.Locations.AutoLocation
     public FacingDirection Direction;
     public SplashColor SplashColor;
 
+    private bool fishing;
+
+    private static readonly IC.LanguageKey attackPromptKey = new("Prompts", "PROMPT_ATTACK");
+
     protected override void OnLoad()
     {
         IC.Events.AddSceneChangeEdit(sceneName!, PlaceFishingSpot);
+        IC.Events.AddLanguageEdit(attackPromptKey, TeachAVesselToFish);
     }
 
     protected override void OnUnload()
     {
         IC.Events.RemoveSceneChangeEdit(sceneName!, PlaceFishingSpot);
+        IC.Events.RemoveLanguageEdit(attackPromptKey, TeachAVesselToFish);
+    }
+
+    private void TeachAVesselToFish(ref string text)
+    {
+        if (fishing)
+        {
+            text = "Fish";
+        }
     }
 
     private void PlaceFishingSpot(USM.Scene scene)
@@ -87,6 +101,8 @@ internal class FishingLocation : IC.Locations.AutoLocation
             {
                 fsm.StopCoroutine(fishingCoroutine);
             }
+            fishing = true;
+            PlayMakerFSM.BroadcastEvent("REMINDER ATTACK");
             fishingCoroutine = Fish();
             fsm.StartCoroutine(fishingCoroutine);
         });
@@ -96,6 +112,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             {
                 fsm.StopCoroutine(fishingCoroutine);
             }
+            fishing = false;
         });
     }
 
