@@ -71,8 +71,8 @@ internal class FishingLocation : IC.Locations.AutoLocation
 
         fsm.GetState("Sit").AppendAction(() =>
         {
-            minigame.StartFishing();
             fishing = true;
+            minigame.StartFishing();
         });
         fsm.GetState("Rise").AppendAction(() =>
         {
