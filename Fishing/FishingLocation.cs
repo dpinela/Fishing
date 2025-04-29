@@ -23,6 +23,9 @@ internal class FishingLocation : IC.Locations.AutoLocation
 
     private static readonly IC.LanguageKey attackPromptKey = new("Prompts", "PROMPT_ATTACK");
 
+    private const float minOpportunityInterval = 3;
+    private const float maxOpportunityInterval = 7;
+
     protected override void OnLoad()
     {
         IC.Events.AddSceneChangeEdit(sceneName!, PlaceFishingSpot);
@@ -62,65 +65,21 @@ internal class FishingLocation : IC.Locations.AutoLocation
             text.text = "FISH";
         });
 
-        var swr = UE.GameObject.Find("Surface Water Region").LocateMyFSM("Surface Water Region");
-        var eff = swr.GetState("Splash Out effects");
-        // will be black instead for Abyss and DV
-        var prefabStateName = SplashColor == SplashColor.Black ? "Black" : "Blue";
-        var (dripPrefab, splashPrefab) = ExtractSplashPrefabs(swr.GetState(prefabStateName));
-        var splashAudio = (UE.AudioClip)((PM.Actions.AudioPlayerOneShotSingle)eff.Actions[1]).audioClip.Value;
-
-        var firstUncaughtItem = 0;
-        var flingDirection = Direction == FacingDirection.Right ? IC.ShinyFling.Left : IC.ShinyFling.Right;
-        SC.IEnumerator Fish()
-        {
-            for (var i = firstUncaughtItem; i < Placement.Items.Count; i++)
-            {
-                if (Placement.Items[i].IsObtained())
-                {
-                    continue;
-                }
-                yield return new UE.WaitForSeconds(3);
-                var s = IC.Util.ShinyUtility.MakeNewShiny(Placement, Placement.Items[i], IC.FlingType.StraightUp);
-                var shinyPos = new UE.Vector3(ShinySourceX, ShinySourceY, s.transform.position.z);
-                s.transform.position = shinyPos;
-                IC.Util.ShinyUtility.SetShinyFling(s.LocateMyFSM("Shiny Control"), flingDirection);
-                s.SetActive(true);
-                firstUncaughtItem = i + 1;
-
-                dripPrefab.Spawn(shinyPos, UE.Quaternion.identity);
-                splashPrefab.Spawn(shinyPos, UE.Quaternion.identity);
-                IC.Internal.SoundManager.PlayClipAtPoint(splashAudio, shinyPos);
-            }
-        };
-
-        SC.IEnumerator? fishingCoroutine = null;
+        var minigame = obj.AddComponent<FishingMinigame>();
+        minigame.Location = this;
+        minigame.enabled = true;
 
         fsm.GetState("Sit").AppendAction(() =>
         {
-            if (fishingCoroutine != null)
-            {
-                fsm.StopCoroutine(fishingCoroutine);
-            }
+            minigame.StartFishing();
             fishing = true;
-            PlayMakerFSM.BroadcastEvent("REMINDER ATTACK");
-            fishingCoroutine = Fish();
-            fsm.StartCoroutine(fishingCoroutine);
         });
         fsm.GetState("Rise").AppendAction(() =>
         {
-            if (fishingCoroutine != null)
-            {
-                fsm.StopCoroutine(fishingCoroutine);
-            }
+            minigame.StopFishing();
             fishing = false;
         });
-    }
-
-    private static (UE.GameObject dripper, UE.GameObject splash) ExtractSplashPrefabs(PM.FsmState state)
-    {
-        var splashAct = state.FindAction((PM.Actions.SetGameObject s) => s.variable.Name == "Splash Out Obj");
-        var dripperAct = state.FindAction((PM.Actions.SetGameObject s) => s.variable.Name == "Dripper Obj");
-        return (dripperAct.gameObject.Value, splashAct.gameObject.Value);
+        fsm.GetState("Sitting").RemoveAction<PM.Actions.ListenForAttack>();
     }
 
     private static UE.GameObject FindImmediateChild(UE.GameObject parent, string childName)

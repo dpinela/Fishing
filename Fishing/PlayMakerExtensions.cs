@@ -31,6 +31,16 @@ internal static class PlayMakerExtensions
         return s.Actions.OfType<T>().First(pred);
     }
 
+    internal static void RemoveAction<T>(this PM.FsmState s)
+    where T : PM.FsmStateAction
+    {
+        var i = System.Array.FindIndex(s.Actions, a => a is T);
+        var actions = new PM.FsmStateAction[s.Actions.Length - 1];
+        System.Array.Copy(s.Actions, actions, i);
+        System.Array.Copy(s.Actions, i + 1, actions, i, s.Actions.Length - i - 1);
+        s.Actions = actions;
+    }
+
     internal static void AppendAction(this PM.FsmState s, System.Action a)
     {
         SpliceAction(s, s.Actions.Length, a);
