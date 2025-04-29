@@ -10,7 +10,7 @@ using RandoData = RandomizerMod.RandomizerData;
 
 namespace Fishing;
 
-public class Fishing : MAPI.Mod
+public class Fishing : MAPI.Mod, MAPI.IGlobalSettings<ModSettings>
 {
     private static Fishing? Instance;
 
@@ -43,6 +43,7 @@ public class Fishing : MAPI.Mod
             // deprecated but still required by the current RandoMapMod release as of this writing
             tag.Properties["WorldMapLocations"] = new (string, float, float)[] { location };
             IC.Finder.DefineCustomLocation(loc);
+            tag.Properties["PinSprite"] = PinSprite.Instance;
         }
 
         Rando.RC.RequestBuilder.OnUpdate.Subscribe(30, ApplyLocationSettings);
@@ -52,6 +53,11 @@ public class Fishing : MAPI.Mod
         Rando.RC.RCData.RuntimeLogicOverride.Subscribe(50.1f, HookLogic);
         Rando.Menu.RandomizerMenuAPI.AddMenuPage(_ => {}, BuildConnectionMenuButton);
         Rando.Logging.SettingsLog.AfterLogSettings += LogRandoSettings;
+
+        if (MAPI.ModHooks.GetMod("RandoSettingsManager") != null)
+        {
+            HookRSM();
+        }
     }
 
     private ModSettings settings = new();
@@ -62,6 +68,17 @@ public class Fishing : MAPI.Mod
     }
 
     public ModSettings OnSaveGlobal() => settings;
+
+    private void HookRSM()
+    {
+        RandoSettingsManager.RandoSettingsManagerMod.Instance.RegisterConnection(
+            new RandoSettingsManagerProxy()
+            {
+                getter = () => settings,
+                setter = rs => settings = rs
+            }
+        );
+    }
 
     private void ApplyLocationSettings(Rando.RC.RequestBuilder rb)
     {

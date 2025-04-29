@@ -48,48 +48,52 @@ internal class FishingMinigame : UE.MonoBehaviour
             StopCoroutine(fishingCoroutine);
         }
 
-        SC.IEnumerator Fish()
+        if (!Location.Placement.AllObtained())
         {
-            for (; firstUncaughtItem < Location.Placement.Items.Count; firstUncaughtItem++)
-            {
-                if (Location.Placement.Items[firstUncaughtItem].IsObtained())
-                {
-                    continue;
-                }
-
-                var splashPos = new UE.Vector3(Location.ShinySourceX, Location.ShinySourceY, 0);
-                void Splash()
-                {
-                    dripPrefab.Spawn(splashPos, UE.Quaternion.identity);
-                    splashPrefab.Spawn(splashPos, UE.Quaternion.identity);
-                    IC.Internal.SoundManager.PlayClipAtPoint(splashAudio, splashPos);
-                }
-
-                caught = false;
-                while (!caught)
-                {
-                    var dt = minOpportunityInterval + (float)rng.NextDouble() * (maxOpportunityInterval - minOpportunityInterval);
-                    nextCatchOpportunity = UE.Time.time + dt;
-                    yield return new UE.WaitForSeconds(dt);
-
-                    // Signal that a catch is available
-                    Splash();
-                    // Wait for the player to maybe catch the item
-                    yield return new UE.WaitForSeconds(catchTolerance);
-                }
-                var flingDirection = Location.Direction == FacingDirection.Right ? IC.ShinyFling.Left : IC.ShinyFling.Right;
-                var s = IC.Util.ShinyUtility.MakeNewShiny(Location.Placement, Location.Placement.Items[firstUncaughtItem], IC.FlingType.StraightUp);
-                var shinyPos = new UE.Vector3(Location.ShinySourceX, Location.ShinySourceY, s.transform.position.z);
-                s.transform.position = shinyPos;
-                IC.Util.ShinyUtility.SetShinyFling(s.LocateMyFSM("Shiny Control"), flingDirection);
-                s.SetActive(true);
-                Splash();
-            }
+            PlayMakerFSM.BroadcastEvent("REMINDER ATTACK");
         }
-
-        PlayMakerFSM.BroadcastEvent("REMINDER ATTACK");
+        
         fishingCoroutine = Fish();
         StartCoroutine(fishingCoroutine);
+    }
+
+    private SC.IEnumerator Fish()
+    {
+        for (; firstUncaughtItem < Location.Placement.Items.Count; firstUncaughtItem++)
+        {
+            if (Location.Placement.Items[firstUncaughtItem].IsObtained())
+            {
+                continue;
+            }
+
+            var splashPos = new UE.Vector3(Location.ShinySourceX, Location.ShinySourceY, 0);
+            void Splash()
+            {
+                dripPrefab.Spawn(splashPos, UE.Quaternion.identity);
+                splashPrefab.Spawn(splashPos, UE.Quaternion.identity);
+                IC.Internal.SoundManager.PlayClipAtPoint(splashAudio, splashPos);
+            }
+
+            caught = false;
+            while (!caught)
+            {
+                var dt = minOpportunityInterval + (float)rng.NextDouble() * (maxOpportunityInterval - minOpportunityInterval);
+                nextCatchOpportunity = UE.Time.time + dt;
+                yield return new UE.WaitForSeconds(dt);
+
+                // Signal that a catch is available
+                Splash();
+                // Wait for the player to maybe catch the item
+                yield return new UE.WaitForSeconds(catchTolerance);
+            }
+            var flingDirection = Location.Direction == FacingDirection.Right ? IC.ShinyFling.Left : IC.ShinyFling.Right;
+            var s = IC.Util.ShinyUtility.MakeNewShiny(Location.Placement, Location.Placement.Items[firstUncaughtItem], IC.FlingType.StraightUp);
+            var shinyPos = new UE.Vector3(Location.ShinySourceX, Location.ShinySourceY, s.transform.position.z);
+            s.transform.position = shinyPos;
+            IC.Util.ShinyUtility.SetShinyFling(s.LocateMyFSM("Shiny Control"), flingDirection);
+            s.SetActive(true);
+            Splash();
+        }
     }
 
     public void StopFishing()
