@@ -42,8 +42,8 @@ public class Fishing : MAPI.Mod, MAPI.IGlobalSettings<ModSettings>
             tag.Properties["WorldMapLocation"] = location;
             // deprecated but still required by the current RandoMapMod release as of this writing
             tag.Properties["WorldMapLocations"] = new (string, float, float)[] { location };
-            IC.Finder.DefineCustomLocation(loc);
             tag.Properties["PinSprite"] = PinSprite.Instance;
+            IC.Finder.DefineCustomLocation(loc);
         }
 
         Rando.RC.RequestBuilder.OnUpdate.Subscribe(30, ApplyLocationSettings);
