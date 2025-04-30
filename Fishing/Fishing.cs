@@ -49,7 +49,6 @@ public class Fishing : MAPI.Mod, MAPI.IGlobalSettings<ModSettings>
         Rando.RC.RequestBuilder.OnUpdate.Subscribe(30, ApplyLocationSettings);
         // must happen before ApplyMultiLocationRebalancing in RandomizerMod
         Rando.RC.RequestBuilder.OnUpdate.Subscribe(49, AddLocationsToPool);
-        // run just after Transcendence so its logic patches also apply to our locations
         Rando.RC.RCData.RuntimeLogicOverride.Subscribe(50.1f, HookLogic);
         Rando.Menu.RandomizerMenuAPI.AddMenuPage(_ => {}, BuildConnectionMenuButton);
         Rando.Logging.SettingsLog.AfterLogSettings += LogRandoSettings;

@@ -204,7 +204,29 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceY = 12.25f,
             Direction = FacingDirection.Right,
             SplashColor = SplashColor.White,
-        }
+        },
+        new()
+        {
+            name = "Fishing_Spot-Junk_Pit",
+            sceneName = IC.SceneNames.GG_Waterways,
+            MarkerX = 75.1f,
+            MarkerY = 12.4f + SitRegionElevation,
+            ShinySourceX = 77.5f,
+            ShinySourceY = 10.18f,
+            Direction = FacingDirection.Right,
+            SplashColor = SplashColor.White,
+        },
+        new()
+        {
+            name = "Fishing_Spot-Pale_Lurker",
+            sceneName = IC.SceneNames.GG_Lurker,
+            MarkerX = 109.1f,
+            MarkerY = 52.4f + SitRegionElevation,
+            ShinySourceX = 106.5f,
+            ShinySourceY = 50.63f,
+            Direction = FacingDirection.Left,
+            SplashColor = SplashColor.White,
+        },
     };
     // major pools:
     // - Lake of Unn

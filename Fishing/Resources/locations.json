@@ -25,7 +25,7 @@
     },
     {
         "name": "Fishing_Spot-Waterways_Long_Acid_Pool",
-        "logic": "Waterways_14[bot1] + ANYCLAW | Waterways_14[bot2] + (RIGHTCLAW | LEFTCLAW + WINGS) + (LEFTSUPERDASH | ACID)"
+        "logic": "Waterways_14[bot1] + (ANYCLAW | (ANTIGRAVWINGS ? FALSE)) | Waterways_14[bot2] + (RIGHTCLAW | LEFTCLAW + WINGS | ANYCLAW + (ANTIGRAV ? FALSE) | (ANTIGRAVWINGS ? FALSE)) + (LEFTSUPERDASH | ACID | (BLUEMOTH ? FALSE))"
     },
     {
         "name": "Fishing_Spot-Abyss_Lighthouse",
@@ -34,5 +34,13 @@
     {
         "name": "Fishing_Spot-Godhome_Atrium",
         "logic": "GG_Atrium | GG_Workshop"
+    },
+    {
+        "name": "Fishing_Spot-Junk_Pit",
+        "logic": "GG_Waterways"
+    },
+    {
+        "name": "Fishing_Spot-Pale_Lurker",
+        "logic": "GG_Lurker[left1] + (SWIM | RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH | SPELLAIRSTALL + $CASTSPELL | RIGHTCLAW + (ANTIGRAV ? FALSE) | (CRYSTALMASTER ? FALSE))"
     }
 ]
