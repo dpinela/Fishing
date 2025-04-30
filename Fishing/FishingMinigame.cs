@@ -26,7 +26,7 @@ internal class FishingMinigame : UE.MonoBehaviour
 
     public void Start()
     {
-        var swr = UE.GameObject.Find("Surface Water Region").LocateMyFSM("Surface Water Region");
+        var swr = UE.GameObject.Find(Location.WaterRegionName).LocateMyFSM("Surface Water Region");
         var eff = swr.GetState("Splash Out effects");
         // will be black instead for Abyss and DV
         var prefabStateName = Location.SplashColor == SplashColor.Black ? "Black" : "Blue";

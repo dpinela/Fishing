@@ -18,6 +18,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
     public float ShinySourceY;
     public FacingDirection Direction;
     public SplashColor SplashColor;
+    public string WaterRegionName = "Surface Water Region";
 
     private bool fishing;
 
@@ -226,6 +227,7 @@ internal class FishingLocation : IC.Locations.AutoLocation
             ShinySourceY = 50.63f,
             Direction = FacingDirection.Left,
             SplashColor = SplashColor.White,
+            WaterRegionName = "Surface Water Region (1)",
         },
     };
     // major pools:
