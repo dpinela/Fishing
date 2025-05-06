@@ -74,8 +74,7 @@ internal class FishingMinigame : UE.MonoBehaviour
                 IC.Internal.SoundManager.PlayClipAtPoint(splashAudio, splashPos);
             }
 
-            caught = false;
-            while (!caught)
+            do
             {
                 var dt = minOpportunityInterval + (float)rng.NextDouble() * (maxOpportunityInterval - minOpportunityInterval);
                 nextCatchOpportunity = UE.Time.time + dt;
@@ -83,9 +82,10 @@ internal class FishingMinigame : UE.MonoBehaviour
 
                 // Signal that a catch is available
                 Splash();
+                caught = false;
                 // Wait for the player to maybe catch the item
                 yield return new UE.WaitForSeconds(catchTolerance);
-            }
+            } while (!caught);
             var flingDirection = Location.Direction == FacingDirection.Right ? IC.ShinyFling.Left : IC.ShinyFling.Right;
             var s = IC.Util.ShinyUtility.MakeNewShiny(Location.Placement, Location.Placement.Items[firstUncaughtItem], IC.FlingType.StraightUp);
             var shinyPos = new UE.Vector3(Location.ShinySourceX, Location.ShinySourceY, s.transform.position.z);
