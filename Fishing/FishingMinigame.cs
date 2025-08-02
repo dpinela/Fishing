@@ -105,7 +105,7 @@ internal class FishingMinigame : UE.MonoBehaviour
         }
     }
 
-    public void FixedUpdate()
+    public void Update()
     {
         if (!GameManager.instance.isPaused
             && input.inputActions.attack.WasPressed)

@@ -151,6 +151,6 @@ public class Fishing : MAPI.Mod, MAPI.IGlobalSettings<ModSettings>
         w.WriteLine(RandoData.JsonUtil.Serialize(settings));
     }
 
-    public override string GetVersion() => "1.0";
+    public override string GetVersion() => "1.0.1";
 }
 
