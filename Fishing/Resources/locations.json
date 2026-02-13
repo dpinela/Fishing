@@ -41,6 +41,6 @@
     },
     {
         "name": "Fishing_Spot-Pale_Lurker",
-        "logic": "GG_Lurker[left1] + (SWIM | RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH | SPELLAIRSTALL + $CASTSPELL | RIGHTCLAW + (ANTIGRAV ? FALSE) | (CRYSTALMASTER ? FALSE))"
+        "logic": "GG_Lurker[left1] + (WINGS | SWIM | RIGHTDASH | LEFTCLAW + RIGHTSUPERDASH | SPELLAIRSTALL + $CASTSPELL | RIGHTCLAW + (ANTIGRAV ? FALSE) | (CRYSTALMASTER ? FALSE))"
     }
 ]
